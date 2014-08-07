@@ -288,10 +288,16 @@ def thumbnail_url(source, alias):
 
         <img src="{{ person.photo|thumbnail_url:'small' }}" alt="">
     """
+    
+    if hasattr(source, 'get_alias_cache'):
+        url = source.get_alias_cache(alias)
+        if url: return  url
     try:
         thumb = get_thumbnailer(source)[alias]
+        
     except Exception:
         return ''
+    
     return thumb.url
 
 

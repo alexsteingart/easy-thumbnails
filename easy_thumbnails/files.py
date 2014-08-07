@@ -751,3 +751,31 @@ class ThumbnailerImageFieldFile(ImageFieldFile, ThumbnailerFieldFile):
                 name = orig_name + generated_ext
         super(ThumbnailerImageFieldFile, self).save(name, content, *args,
                                                     **kwargs)
+        
+class ThumbnailerCacheImageFieldFile(ThumbnailerImageFieldFile):
+    
+    
+    def __getitem__(self, alias):
+        """
+        Retrieve a thumbnail matching the alias options (or raise a
+        ``KeyError`` if no such alias exists).
+        """
+        
+        item = super(ThumbnailerCacheImageFieldFile, self).__getitem__(alias)
+        
+        self.cache_alias(alias, item.url)
+        
+        return item
+    
+    def get_alias_cache(self, alias):
+        tcf = getattr(self.field, 'thumbnail_cache_field')
+        if tcf and alias in getattr(self.instance, tcf):
+            return getattr(self.instance, tcf)[alias]
+    
+    def cache_alias(self, alias, url):
+        tcf = getattr(self.field, 'thumbnail_cache_field')
+        if tcf:
+            model = self.instance
+            jsonfield = getattr(model, tcf)
+            jsonfield[alias] = url
+            model.save()

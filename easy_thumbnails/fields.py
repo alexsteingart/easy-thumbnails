@@ -61,3 +61,47 @@ class ThumbnailerImageField(ThumbnailerField, ImageField):
         field_class = 'django.db.models.fields.files.ImageField'
         args, kwargs = introspector(self)
         return (field_class, args, kwargs)
+
+
+class ThumbnailerCacheImageField(ThumbnailerImageField):
+    
+    attr_class = files.ThumbnailerCacheImageFieldFile
+    
+    def __init__(self, thumbnail_cache_field=None, *args, **kwargs):
+        self.thumbnail_cache_field = thumbnail_cache_field
+        super(ThumbnailerCacheImageField, self).__init__(*args, **kwargs)
+    
+    
+    '''
+    def south_field_triple(self):
+        """
+        Return a suitable description of this field for South.
+        """
+        from south.modelsinspector import introspector
+        field_class = 'django.db.models.fields.files.ImageField'
+        args, kwargs = introspector(self)
+        return (field_class, args, kwargs)
+    
+    
+    
+    def contribute_to_class(self, cls, name):
+        super(ImageField, self).contribute_to_class(cls, name)
+        # Attach update_dimension_fields so that dimension fields declared
+        # after their corresponding image field don't stay cleared by
+        # Model.__init__, see bug #11196.
+        from easy_thumbnails.signals import thumbnail_created
+        thumbnail_created.connect(self.update_thumbnail_cache)
+    
+        
+    def update_thumbnail_cache(self, *args, **kwargs):
+        
+        print kwargs
+        # Update the thumbnail cache field.
+        #if self.thumbnail_cache_field:
+        #    jsonfield = getattr(instance, self.thumbnail_cache_field)
+        #    jsonfield[option_string] = url
+        
+        thumbnail = kwargs['sender']
+    '''    
+        
+        
